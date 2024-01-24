@@ -22,6 +22,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profilePhoto: {
+      id: {
+        type: String,
+      },
+      secure_url: {
+        type: String,
+      },
+    },
     addresses: [
       {
         type: mongoose.Schema.Types.ObjectId,
