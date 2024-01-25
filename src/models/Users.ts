@@ -1,18 +1,36 @@
 import mongoose from "mongoose";
+import { AddressDocument } from "./Addresses";
+
+export interface UserInput {
+  email: string;
+  name: string;
+  phone: string;
+  role: string;
+  password: string;
+  profilePhoto: { id: string; secure_url: string };
+  addresses: [AddressDocument["id"]];
+  verificationDetails: {
+    verificationState: string;
+    code: string;
+    generatedAt: Date;
+  };
+}
+
+export interface UserDocument extends UserInput, mongoose.Document {
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
-      required: true,
     },
     phone: {
       type: String,
-      required: true,
     },
     password: {
       type: String,
@@ -36,9 +54,16 @@ const UserSchema = new mongoose.Schema(
         ref: "Address",
       },
     ],
-    status: {
-      type: String,
-      required: true,
+    verificationDetails: {
+      verificationState: {
+        type: String,
+      },
+      code: {
+        type: String,
+      },
+      generatedAt: {
+        type: Date,
+      },
     },
   },
   {
@@ -46,6 +71,6 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model<UserDocument>("User", UserSchema);
 
 export default User;

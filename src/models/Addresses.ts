@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+export interface AddressDocument extends mongoose.Document {
+  address_1: string;
+  address_2: string;
+  zipcode: number;
+  city: string;
+  state: string;
+  country: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const AddressSchema = new mongoose.Schema(
   {
     address_1: {
@@ -32,6 +43,6 @@ const AddressSchema = new mongoose.Schema(
   }
 );
 
-const Address = mongoose.model("Address", AddressSchema);
+const Address = mongoose.model<AddressDocument>("Address", AddressSchema);
 
 export default Address;
