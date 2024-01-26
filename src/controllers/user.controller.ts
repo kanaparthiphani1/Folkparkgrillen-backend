@@ -1,8 +1,10 @@
+import { StatusCodes } from "http-status-codes";
 import { SignupMobileInput } from "../schemas/signup_mobile.schema";
 import {
   signupwithemailService,
   verifyOtpService,
 } from "../services/user.service";
+import AppError from "../utils/app-error";
 import { SignupEmailInput } from "./../schemas/signup_email.schema";
 import { Request, Response } from "express";
 
@@ -15,9 +17,9 @@ export async function signupwithemail(
     const user = await signupwithemailService(email, password);
     return res.status(200).json({ userId: user?._id });
   } catch (err: any) {
-    console.log(err);
+    console.log("Err 1: ", err);
 
-    return res.status(500).json({ error: err.message });
+    return res.status(err.statusCode).json(err);
   }
 }
 
@@ -27,7 +29,7 @@ export async function verifyOtpWithEmail(req: Request, res: Response) {
     const user = await verifyOtpService(userId, otp);
     return res.status(200).json({ userId: user?._id });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    return res.status(err.statusCode).json(err);
   }
 }
 
