@@ -1,12 +1,18 @@
 import User from "../models/Users";
 import bcrypt from "bcrypt";
 import { getOtp, sendOtpMail } from "../utils/helpers";
+import { Response } from "express";
 
 export async function signupwithemailService(email: string, password: string) {
   try {
     //get a 4 dig code and shoot a email with otp
+    const registered = await User.findOne({ email: email });
+    if (registered) {
+      throw new Error("User already registered");
+    }
+
     const otp = getOtp().toString();
-    const hashedOtp = await bcrypt.hash(otp, 10);
+    const hashedOtp = await bcrypt.hash(otp, Number(process.env.SALT));
 
     const user = await User.create({
       email: email,

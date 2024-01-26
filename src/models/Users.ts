@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { AddressDocument } from "./Addresses";
 
@@ -70,6 +71,14 @@ const UserSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+UserSchema.pre("save", async function () {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, Number(process.env.SALT));
+  }
+
+  this.updatedAt = new Date();
+});
 
 const User = mongoose.model<UserDocument>("User", UserSchema);
 

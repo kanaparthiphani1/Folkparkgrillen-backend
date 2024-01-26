@@ -15,6 +15,8 @@ export async function signupwithemail(
     const user = await signupwithemailService(email, password);
     return res.status(200).json({ userId: user?._id });
   } catch (err: any) {
+    console.log(err);
+
     return res.status(500).json({ error: err.message });
   }
 }
