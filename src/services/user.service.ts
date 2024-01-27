@@ -71,3 +71,29 @@ export async function verifyOtpService(userId: string, otp: string) {
     throw new AppError(err.message, StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
+
+export async function signinService(email: string, password: string) {
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw new AppError("User not found", StatusCodes.NOT_FOUND);
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new AppError("Invalid password", StatusCodes.BAD_REQUEST);
+    }
+
+    return user.toJSON();
+  } catch (err: any) {
+    console.log("ERROR: ", err);
+
+    if (
+      err.statusCode === StatusCodes.BAD_REQUEST ||
+      err.statusCode === StatusCodes.NOT_FOUND
+    ) {
+      throw err;
+    }
+    throw new AppError(err.message, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}

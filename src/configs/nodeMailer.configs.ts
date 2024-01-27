@@ -2,8 +2,6 @@ import nodeMailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
 
-console.log("PAsswors :", process.env.GMAIL_PASS?.trim());
-
 const mailerSender = nodeMailer.createTransport({
   service: "Gmail",
   auth: {
