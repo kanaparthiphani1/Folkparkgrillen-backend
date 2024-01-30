@@ -1,5 +1,7 @@
 import express from "express";
 import {
+  forgotPassword,
+  resetPassword,
   signin,
   signout,
   signupwithemail,
@@ -22,6 +24,8 @@ router.post(
 router.post("/verify/email", verifyOtpWithEmail);
 
 router.post("/email/signin", validateResource(SignInEmailSchema), signin);
+router.post("/forgotpassword", forgotPassword);
+router.post("/resetpassword/:token", resetPassword);
 router.get("/signout", signout);
 router.get("/dummy/restricted", checkUser, (req, res) => {
   return res.status(200).json({ message: "Success" });

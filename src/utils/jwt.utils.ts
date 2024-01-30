@@ -4,6 +4,8 @@ import AppError from "./app-error";
 import { StatusCodes } from "http-status-codes";
 import { get } from "lodash";
 import User from "../models/Users";
+import crypto from "crypto";
+import { sendPasswordResetMail } from "./helpers";
 
 export function signJwt(object: Object, options?: jwt.SignOptions | undefined) {
   try {

@@ -1,6 +1,12 @@
 import User from "../models/Users";
 import bcrypt from "bcrypt";
-import { getOtp, sendOtpMail } from "../utils/helpers";
+import crypto from "crypto";
+import {
+  getOtp,
+  isHex,
+  sendOtpMail,
+  sendPasswordResetMail,
+} from "../utils/helpers";
 import AppError from "../utils/app-error";
 import { StatusCodes } from "http-status-codes";
 
@@ -91,6 +97,74 @@ export async function signinService(email: string, password: string) {
     if (
       err.statusCode === StatusCodes.BAD_REQUEST ||
       err.statusCode === StatusCodes.NOT_FOUND
+    ) {
+      throw err;
+    }
+    throw new AppError(err.message, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export async function forgotPasswordService(email: string, link: string) {
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw new AppError("User not found", StatusCodes.NOT_FOUND);
+    }
+    const resetToken = user.genForgotPasswordToken();
+
+    await user.save({ validateBeforeSave: false });
+    link = link + `${resetToken}`;
+    await sendPasswordResetMail(user.email, link);
+  } catch (err: any) {
+    if (err.code === StatusCodes.NOT_FOUND) {
+      throw err;
+    }
+
+    throw new AppError(err.message, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export async function resetPasswordService(
+  token: string,
+  password: string,
+  confPassword: string
+) {
+  try {
+    if (!password || !confPassword) {
+      return new AppError(
+        "Password and Confirm Password are required",
+        StatusCodes.BAD_REQUEST
+      );
+    }
+
+    if (password !== confPassword) {
+      return new AppError(
+        "Password and Confirm Password must be equal",
+        StatusCodes.BAD_REQUEST
+      );
+    }
+
+    const hashToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      forgotPasswordToken: hashToken,
+      forgotPasswordExpiry: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return new AppError("User not registered", StatusCodes.NOT_FOUND);
+    }
+
+    user.password = password;
+
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordExpiry = undefined;
+
+    await user.save();
+  } catch (err: any) {
+    if (
+      err.code === StatusCodes.BAD_REQUEST ||
+      err.code === StatusCodes.NOT_FOUND
     ) {
       throw err;
     }

@@ -1,6 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { SignupMobileInput } from "../schemas/signup_mobile.schema";
 import {
+  forgotPasswordService,
+  resetPasswordService,
   signinService,
   signupwithemailService,
   verifyOtpService,
@@ -82,6 +84,31 @@ export async function signout(req: Request, res: Response) {
   return res
     .status(StatusCodes.OK)
     .json({ message: "Successfully signed out" });
+}
+
+//TODO: need to create schema validation
+export async function forgotPassword(req: Request, res: Response) {
+  try {
+    const { email } = req.body;
+    const resetlink = `${req.protocol}://${req.hostname}/api/v1/user/resetpassword/`;
+    await forgotPasswordService(email, resetlink);
+    return res.status(StatusCodes.OK).json({ message: "mail has been sent" });
+  } catch (err: any) {
+    return res.status(err.statusCode).json(err);
+  }
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  try {
+    const token = req.params.token;
+    const { password, confPassword } = req.body;
+    await resetPasswordService(token, password, confPassword);
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "password reset successful" });
+  } catch (err: any) {
+    return res.status(err.statusCode).json(err);
+  }
 }
 
 function signupwithmobile(
