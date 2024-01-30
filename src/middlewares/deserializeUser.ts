@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyJwt } from "../utils/jwt.utils";
+import { reIssueAccessToken, signJwt, verifyJwt } from "../utils/jwt.utils";
+import User from "../models/Users";
+import { get } from "lodash";
 
 export const deserializeUser = async (
   req: Request,
@@ -24,6 +26,16 @@ export const deserializeUser = async (
 
   if (expired && refreshToken) {
     //reissue the access token
+    const newAccessToken = await reIssueAccessToken(refreshToken);
+    if (!newAccessToken) return next();
+    if (newAccessToken) {
+      res.setHeader("x-access-token", newAccessToken);
+    }
+
+    const result = verifyJwt(newAccessToken);
+
+    res.locals.user = result.decoded;
+    return next();
   }
 
   return next();
