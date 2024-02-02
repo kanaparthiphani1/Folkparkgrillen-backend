@@ -10,7 +10,7 @@ export interface UserInput {
   phone: string;
   role: string;
   password: string;
-  profilePhoto: { id: string; secure_url: string };
+  profilePhoto: string;
   addresses: [AddressDocument["id"]];
   verificationDetails: {
     verificationState: string;
@@ -47,12 +47,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
     profilePhoto: {
-      id: {
-        type: String,
-      },
-      secure_url: {
-        type: String,
-      },
+      type: String,
     },
     addresses: [
       {

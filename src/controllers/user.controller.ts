@@ -5,6 +5,7 @@ import {
   resetPasswordService,
   signinService,
   signupwithemailService,
+  updateProfileService,
   verifyOtpService,
 } from "../services/user.service";
 import AppError from "../utils/app-error";
@@ -106,6 +107,21 @@ export async function resetPassword(req: Request, res: Response) {
     return res
       .status(StatusCodes.OK)
       .json({ message: "password reset successful" });
+  } catch (err: any) {
+    return res.status(err.statusCode).json(err);
+  }
+}
+
+export async function updateProfile(req: Request, res: Response) {
+  try {
+    const userId = res.locals.user.userId;
+    const userProfilePicPath = req.file?.path;
+    const user = await updateProfileService(
+      userId,
+      req.body,
+      userProfilePicPath || ""
+    );
+    return res.status(StatusCodes.OK).json({ user });
   } catch (err: any) {
     return res.status(err.statusCode).json(err);
   }

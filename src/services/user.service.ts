@@ -9,6 +9,7 @@ import {
 } from "../utils/helpers";
 import AppError from "../utils/app-error";
 import { StatusCodes } from "http-status-codes";
+import { uploadOnCloudinary } from "../utils/cloudinary";
 
 export async function signupwithemailService(email: string, password: string) {
   try {
@@ -166,6 +167,43 @@ export async function resetPasswordService(
       err.code === StatusCodes.BAD_REQUEST ||
       err.code === StatusCodes.NOT_FOUND
     ) {
+      throw err;
+    }
+    throw new AppError(err.message, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export async function updateProfileService(
+  id: string,
+  body: any,
+  imagePath: string
+) {
+  try {
+    let cloudResp;
+    if (imagePath.length > 0) {
+      cloudResp = await uploadOnCloudinary(imagePath);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          name: body.name,
+          phone: body.phone,
+          addresses: body.addresses,
+          profilePhoto: cloudResp?.url || null,
+        },
+      },
+      { new: true }
+    )
+      .select("-password")
+      .select("-forgotPasswordToken")
+      .select("-forgotPasswordExpiry")
+      .select("-verificationDetails");
+
+    return user;
+  } catch (err: any) {
+    if (err.code === StatusCodes.NOT_FOUND) {
       throw err;
     }
     throw new AppError(err.message, StatusCodes.INTERNAL_SERVER_ERROR);
