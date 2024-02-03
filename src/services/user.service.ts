@@ -10,6 +10,7 @@ import {
 import AppError from "../utils/app-error";
 import { StatusCodes } from "http-status-codes";
 import { uploadOnCloudinary } from "../utils/cloudinary";
+import Dish from "../models/Dishes";
 
 export async function signupService(email: string, password: string) {
   try {
@@ -181,7 +182,7 @@ export async function updateProfileService(
   try {
     let cloudResp;
     if (imagePath.length > 0) {
-      cloudResp = await uploadOnCloudinary(imagePath);
+      cloudResp = await uploadOnCloudinary(imagePath, "user", body.name);
     }
 
     const user = await User.findByIdAndUpdate(

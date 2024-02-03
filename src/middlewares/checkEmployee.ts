@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import User from "../models/Users";
 import { StatusCodes } from "http-status-codes";
 
-export const checkAdmin = async (
+export const checkEmployee = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -20,7 +20,7 @@ export const checkAdmin = async (
     return res.status(403).json({ message: "Invalid Request" });
   }
 
-  if (!userObj.role.includes("ADMIN")) {
+  if (!userObj.role.includes("EMPLOYEE")) {
     return res
       .status(StatusCodes.FORBIDDEN)
       .json({ message: "Not Authorized" });

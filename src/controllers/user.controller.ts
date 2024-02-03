@@ -54,13 +54,11 @@ export async function signin(
     );
 
     res.cookie("accessToken", accessToken, {
-      maxAge: 900000, // 15 mins
       httpOnly: true,
       secure: false,
     });
 
     res.cookie("refreshToken", refreshToken, {
-      maxAge: 3.154e10, // 1 year
       httpOnly: true,
       secure: false,
     });

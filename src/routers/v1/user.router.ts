@@ -13,6 +13,7 @@ import { SignupEmailSchema } from "../../schemas/signup_email.schema";
 import { SignInEmailSchema } from "../../schemas/signin_email.schema";
 import checkUser from "../../middlewares/checkUser";
 import { upload } from "../../middlewares/multer.middleware";
+import { checkAdmin } from "../../middlewares/checkAdmin";
 
 const router = express.Router();
 

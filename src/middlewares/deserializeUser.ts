@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { reIssueAccessToken, signJwt, verifyJwt } from "../utils/jwt.utils";
-import User from "../models/Users";
-import { get } from "lodash";
+import { reIssueAccessToken, verifyJwt } from "../utils/jwt.utils";
 
 export const deserializeUser = async (
   req: Request,
@@ -26,10 +24,16 @@ export const deserializeUser = async (
 
   if (expired && refreshToken) {
     //reissue the access token
+    console.log("ACCESS_TOKEN_EXPIRED");
+
     const newAccessToken = await reIssueAccessToken(refreshToken);
     if (!newAccessToken) return next();
     if (newAccessToken) {
-      res.setHeader("x-access-token", newAccessToken);
+      res.cookie("accessToken", newAccessToken, {
+        maxAge: 900000, // 15 mins
+        httpOnly: true,
+        secure: false,
+      });
     }
 
     const result = verifyJwt(newAccessToken);

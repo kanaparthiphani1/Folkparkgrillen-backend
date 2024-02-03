@@ -14,18 +14,19 @@ const DishSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "DishType",
     },
-    photos: [
-      {
-        id: {
-          type: String,
-        },
-        secure_url: {
-          type: String,
-        },
+    photo: {
+      url: {
+        type: String,
       },
-    ],
+      public_id: {
+        type: String,
+      },
+    },
     rating: {
       type: Number,
+    },
+    category: {
+      type: String,
       required: true,
     },
     reviews: [
