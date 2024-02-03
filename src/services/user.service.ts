@@ -11,7 +11,7 @@ import AppError from "../utils/app-error";
 import { StatusCodes } from "http-status-codes";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 
-export async function signupwithemailService(email: string, password: string) {
+export async function signupService(email: string, password: string) {
   try {
     //get a 4 dig code and shoot a email with otp
     const registered = await User.findOne({ email: email });
@@ -25,7 +25,7 @@ export async function signupwithemailService(email: string, password: string) {
     const user = await User.create({
       email: email,
       password: password,
-      role: "USER",
+      role: ["USER"],
       verificationDetails: {
         verificationState: "NOT_VERIFIED",
         code: hashedOtp,

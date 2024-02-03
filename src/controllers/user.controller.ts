@@ -1,26 +1,24 @@
 import { StatusCodes } from "http-status-codes";
-import { SignupMobileInput } from "../schemas/signup_mobile.schema";
 import {
   forgotPasswordService,
   resetPasswordService,
   signinService,
-  signupwithemailService,
+  signupService,
   updateProfileService,
   verifyOtpService,
 } from "../services/user.service";
-import AppError from "../utils/app-error";
 import { SignupEmailInput } from "./../schemas/signup_email.schema";
 import { Request, Response } from "express";
 import { SignInInput } from "../schemas/signin_email.schema";
 import { signJwt } from "../utils/jwt.utils";
 
-export async function signupwithemail(
+export async function signup(
   req: Request<{}, {}, SignupEmailInput["body"]>,
   res: Response
 ) {
   try {
     const { email, password } = req.body;
-    const user = await signupwithemailService(email, password);
+    const user = await signupService(email, password);
     return res.status(200).json({ userId: user?._id });
   } catch (err: any) {
     console.log("Err 1: ", err);
@@ -126,8 +124,3 @@ export async function updateProfile(req: Request, res: Response) {
     return res.status(err.statusCode).json(err);
   }
 }
-
-function signupwithmobile(
-  req: Request<{}, {}, SignupMobileInput["body"]>,
-  res: Response
-) {}

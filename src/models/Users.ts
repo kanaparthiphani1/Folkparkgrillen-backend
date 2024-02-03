@@ -2,13 +2,12 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import crypto from "crypto";
 import { AddressDocument } from "./Addresses";
-import { isHex } from "../utils/helpers";
 
 export interface UserInput {
   email: string;
   name: string;
   phone: string;
-  role: string;
+  role: [string];
   password: string;
   profilePhoto: string;
   addresses: [AddressDocument["id"]];
@@ -42,10 +41,12 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    role: {
-      type: String,
-      required: true,
-    },
+    role: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     profilePhoto: {
       type: String,
     },
