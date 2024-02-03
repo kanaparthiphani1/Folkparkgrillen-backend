@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import OrderItemSchema from "./OrderItem";
 
 const OrderSchema = new mongoose.Schema(
   {
@@ -7,13 +8,7 @@ const OrderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    orderItems: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "OrderItem",
-        required: true,
-      },
-    ],
+    orderItems: [OrderItemSchema],
     amount: {
       type: Number,
       required: true,

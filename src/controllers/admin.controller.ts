@@ -53,7 +53,10 @@ export async function updateDishes(req: Request, res: Response) {
   }
 }
 
-export async function addEmployee(req: Request, res: Response) {}
+export async function addEmployee(req: Request, res: Response) {
+  try {
+  } catch (err: any) {}
+}
 
 export async function removeEmployee(req: Request, res: Response) {}
 
